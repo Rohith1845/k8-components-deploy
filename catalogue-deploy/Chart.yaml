@@ -1,5 +1,5 @@
-appVersion: v1
-name: nginx #chart name
+apiVersion: v2
+name: catalogue #chart name
 version: 1.0.0 # chart version
 description: catalogue installation
-apiVersion: v1 # this is application versions
+appVersion: v1 # this is application versions
