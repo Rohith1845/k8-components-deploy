@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata: 
+    name: roboshop-services
+    namespace: argocd
+spec: 
+    generators:
+        - matrix:
+            generators:
+            - lists:
+                elements:
+                - service: catalogue
+                - service: cart
+                - service: user
+            - lists:
+                elements:
+                - env: dev
+                - env: prod
+    template:
+        metadata: 
+            name: {{service}}-{{ env }}
+        spec:
+            project: default
+            source:
+                repoURL: https://github.com/Rohith1845/argocd.git
+                targetRevision: main
+                path: '{{service}}'
+                helm:
+                    valuesFiles:
+                    - values-{{ env }}.yaml
+            destination:
+                server: https://kubernetes.default.svc
+                namespace: '{{ env }}'
+            syncPolicy:
+                automated:
+                    prune: true
+                    selfHeal: true
