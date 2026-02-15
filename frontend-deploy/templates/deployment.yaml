@@ -104,18 +104,18 @@ spec:
         ports:
         - name: liveness-port
           containerPort: 8080
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: liveness-port
-          failureThreshold: 1
-          periodSeconds: 15
         livenessProbe:
           httpGet:
-            path: /health
-            port: liveness-port
-          failureThreshold: 1
-          periodSeconds: 15
+            path: /
+            port: 8080
+          failureThreshold: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          failureThreshold: 5
+          periodSeconds: 5
         volumeMounts:
           - name: nginx-config
             mountPath: /etc/nginx/nginx.conf
