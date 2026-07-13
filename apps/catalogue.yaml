@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/vialpha1
 kind: Appication
 metadata:
-  name: cart
+  name: catalogue
   namespace: argocd
 spec:
   project: default
