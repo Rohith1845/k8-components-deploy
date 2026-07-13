@@ -6,15 +6,15 @@ metadata:
 spec:
   project: default
   source:
-    repoURL:
+    repoURL: https://github.com/Rohith1845/k8-components-deploy.git
     targetRevision: main
     path: user-deploy
     helm:
       valueFiles:
         -values-dev.yaml
   destination:
-    server:
-    namespace: argocd
+    server: https://kubernetes.default.svc
+    namespace: user
   syncPolicy:
     automated:
       selfHeal: true
