@@ -1,1 +1,23 @@
-
+apiVersion: argoproj.io/vialpha1
+kind: Appication
+metadata:
+  name: shipping
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL:
+    targetRevision: main
+    path: shipping-deploy
+    helm:
+      valueFiles:
+        -values-dev.yaml
+  destination:
+    server:
+    namespace: argocd
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
