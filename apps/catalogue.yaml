@@ -13,8 +13,8 @@ spec:
       valueFiles:
         -values-dev.yaml
   destination:
-    server:
-    namespace: argocd
+    server: https://kubernetes.default.svc
+    namespace: catalogue
   syncPolicy:
     automated:
       selfHeal: true
