@@ -1,5 +1,5 @@
-apiVersion: argoproj.io/vialpha1
-kind: Appication
+apiVersion: argoproj.io/v1alpha1
+kind: Application
 metadata:
   name: user
   namespace: argocd
@@ -11,7 +11,7 @@ spec:
     path: user-deploy
     helm:
       valueFiles:
-        -values-dev.yaml
+        - values-dev.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: user
