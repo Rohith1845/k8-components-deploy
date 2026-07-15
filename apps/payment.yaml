@@ -17,7 +17,7 @@ spec:
     namespace: payment
   syncPolicy:
     automated:
-      selfHeal: true
       prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
