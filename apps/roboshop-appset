@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: roboshop-appset
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - app: cart
+          - app: catalogue
+          - app: frontend
+          - app: user
+          - app: payment
+          - app: shipping
+    - list:
+        elements:
+          - env: dev
+          - env: prod
+  template:
+    metadata:
+      name: '{{app}}-{{env}}' #cart-dev
+      namespace: argocd
+    spec: 
+      project: default
+      source:
+        repoURL:
+        targetRevision: main
+        path: '{{app}}-deploy'
+        helm:
+          valuesFiles:
+            - values-{{env}}.yaml
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{app}}-{{env}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - createNamespace=true
