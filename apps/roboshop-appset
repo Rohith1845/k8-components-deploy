@@ -5,30 +5,41 @@ metadata:
   namespace: argocd
 spec:
   generators:
-    - list:
-        elements:
-          - app: cart
-          - app: catalogue
-          - app: frontend
-          - app: user
-          - app: payment
-          - app: shipping
-    - list:
-        elements:
-          - env: dev
-          - env: prod
+    - matrix:
+        generators:
+          - list:
+              elements:
+                - app: user
+                  wave: "1"
+                - app: catalogue
+                  wave: "1"
+                - app: cart
+                  wave: "2"
+                - app: frontend
+                  wave: "4"
+                - app: payment
+                  wave: "4"
+                - app: shipping
+                  wave: "4"
+          - list:
+              elements:
+                - env: dev
+                - env: prod
   template:
     metadata:
       name: '{{app}}-{{env}}' #cart-dev
       namespace: argocd
+      annotations:
+        argocd.argoproj.io/sync-wave: {{wave}}            # ← sync wave added
     spec: 
       project: default
       source:
-        repoURL:
+        repoURL: https://github.com/Rohith1845/k8-components-deploy
         targetRevision: main
         path: '{{app}}-deploy'
         helm:
-          valuesFiles:
+          valueFiles:
+            - values.yaml
             - values-{{env}}.yaml
       destination:
         server: 'https://kubernetes.default.svc'
