@@ -1,18 +1,8 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: cart
-  namespace: roboshop
-data:
-  REDIS_HOST: "{{ .Values.configMap.REDIS_HOST }}"
-  CATALOGUE_HOST: "{{ .Values.configMap.CATALOGUE_HOST }}"
-  CATALOGUE_PORT: "8080"
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cart
-  namespace: roboshop
+  # namespace: roboshop
   # these are replica set labels
   labels:
     project: roboshop
@@ -56,18 +46,6 @@ spec:
             port: liveness-port
           failureThreshold: 1
           periodSeconds: 15
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: cart
-  namespace: roboshop
-spec:
-  selector:
-    project: roboshop
-    component: cart
-    tier: backend
-  ports:
     - protocol: TCP
       port: {{ .Values.service.servicePort }} # service port
       targetPort: 8080 # container port
