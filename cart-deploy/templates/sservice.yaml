@@ -3,8 +3,8 @@ kind: Service
 metadata:
   name: cart
   # namespace: roboshop
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
+  #annotations:
+    #argocd.argoproj.io/sync-wave: "2"
 spec:
   selector:
     project: roboshop
