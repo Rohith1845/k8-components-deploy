@@ -1,39 +1,49 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cart
+  name: {{ include "cart.name" . }}
   # namespace: roboshop
   # these are replica set labels
   labels:
-    project: roboshop
-    component: cart
-    tier: backend
+    {{- include "cart.labels" . | nindent 4 }}
+    # project: roboshop
+    # component: cart
+    # tier: backend
 spec:
-  replicas: 1
+  replicas: {{ .Values.deployment.replicas }}
   selector:
     # these labels are used to select pods
     matchLabels:
-      project: roboshop
-      component: cart
-      tier: backend
+      {{- include "cart.labels" . | nindent 6 }}
+      # project: roboshop
+      # component: cart
+      # tier: backend
   # pod definition
   template:
     metadata:
       labels:
-        project: roboshop
-        component: cart
-        tier: backend
+        {{- include "cart.labels" . | nindent 8 }}
+        # project: roboshop
+        # component: cart
+        # tier: backend
     spec:
       containers:
-      - name: cart
+      - name: {{ include "cart.name" . }}
         image: "{{ .Values.deployment.imageRepo }}:{{ .Values.deployment.imageVersion}}"
-        imagePullPolicy: Always
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
         envFrom:
         - configMapRef:
-            name: cart
+            name: {{ include "cart.name" . }}
         ports:
         - name: liveness-port
           containerPort: 8080
+        resources:
+          requests:
+            cpu: {{ .Values.deployment.resources.requests.cpu }}
+            memory: {{ .Values.deployment.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.deployment.resources.limits.cpu }}
+            memory: {{ .Values.deployment.resources.limits.memory }}
         readinessProbe:
           httpGet:
             path: /health
@@ -46,6 +56,3 @@ spec:
             port: liveness-port
           failureThreshold: 1
           periodSeconds: 15
-    - protocol: TCP
-      port: {{ .Values.service.servicePort }} # service port
-      targetPort: 8080 # container port
