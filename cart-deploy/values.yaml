@@ -1,5 +1,21 @@
 deployment:
   imageRepo: 153402910823.dkr.ecr.us-east-1.amazonaws.com/roboshop/cart
   imageVersion: IMAGE_VERSION
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
 service:
   servicePort: 8080 # default value
+
+configMap:
+  REDIS_HOST: ""
+  CATALOGUE_HOST: ""
+  CATALOGUE_PORT: "8080"
+
+imagePullPolicy: Always
