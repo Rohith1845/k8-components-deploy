@@ -1,3 +1,13 @@
+deployment:
+  replicas: 2
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 400m
+      memory: 512Mi
+
 configMap:
-  REDIS_HOST: "redis"
-  CATALOGUE_HOST: "catalogue"
+  REDIS_HOST: "redis-port"
+  CATALOGUE_HOST: "catalogue-prod"
