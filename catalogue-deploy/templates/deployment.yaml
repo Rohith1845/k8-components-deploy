@@ -1,12 +1,3 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: catalogue
-  namespace: roboshop
-data: 
-  MONGO: "true"
-  MONGO_URL: "{{ .Values.configmap.mongoURL }}"
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -52,22 +43,3 @@ spec:
               port: liveness-port
             failureThreshold: 1
             periodSeconds: 15
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: catalogue
-  namespace: roboshop
-spec:
-  selector:
-    project: roboshop
-    component: catalogue
-    tier: backend 
-  ports:
-    - protocol: TCP
-      port: {{ .Values.service.servicePort }}
-      targetPort: 8080
-
-
-
-
