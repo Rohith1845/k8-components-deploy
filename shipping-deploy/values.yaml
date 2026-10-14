@@ -1,5 +1,31 @@
+configMap:
+  CART_ENDPOINT: "cart:8080"
+  DB_HOST: "mysql"
+
 deployment:
+  replicas: 1
   imageRepo: 153402910823.dkr.ecr.us-east-1.amazonaws.com/roboshop/shipping
   imageVersion: IMAGE_VERSION
+  imagePullPolicy: Always
+  containerPort: 8080
+  startupProbe:            # gives slow JVM startup up to 30 x 10s = 5 min
+    httpGet:
+      path: /health
+      port: http
+    periodSeconds: 10
+    failureThreshold: 30
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: http
+    periodSeconds: 15
+    failureThreshold: 3
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: http
+    periodSeconds: 15
+    failureThreshold: 3
+
 service:
-  servicePort: 8080 # default value
+  servicePort: 8080
