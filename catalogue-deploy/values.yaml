@@ -1,5 +1,27 @@
-deployment: 
+configmap:
+  data:
+    MONGO: "true"
+    MONGO_URL: "mongodb://mongodb:27017/catalogue"
+
+deployment:
+  replicas: 1
   imageRepo: 153402910823.dkr.ecr.us-east-1.amazonaws.com/roboshop/catalogue
   imageVersion: IMAGE_VERSION
-service: 
-  servicePort: 8080 #default port
+  imagePullPolicy: Always
+  containerPort: 8080
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: http
+    periodSeconds: 15
+    failureThreshold: 1
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: http
+    periodSeconds: 15
+    failureThreshold: 1
+
+service:
+  type: ClusterIP
+  servicePort: 8080   # default port
