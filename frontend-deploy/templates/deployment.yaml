@@ -1,56 +1,46 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
-  namespace: roboshop
-  # these are replica set labels
+  name: {{ include "frontend.name" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    project: roboshop
-    component: frontend
-    tier: frontend
+    {{- include "frontend.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.deployment.replicas }}
   selector:
-    # these labels are used to select pods
     matchLabels:
-      project: roboshop
-      component: frontend
-      tier: frontend
-  # pod definition
+      {{- include "frontend.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        project: roboshop
-        component: frontend
-        tier: frontend
+        {{- include "frontend.labels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
       containers:
-      - name: frontend
-        image: "{{ .Values.deployment.imageRepo }}:{{ .Values.deployment.imageVersion}}"
-        imagePullPolicy: Always
-        envFrom:
-        - configMapRef:
-            name: frontend
-        ports:
-        - name: liveness-port
-          containerPort: 8080
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: liveness-port
-          failureThreshold: 1
-          periodSeconds: 15
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: liveness-port
-          failureThreshold: 1
-          periodSeconds: 15
-        volumeMounts:
-          - name: nginx-config
-            mountPath: /etc/nginx/nginx.conf
-            subPath: nginx.conf
+        - name: {{ include "frontend.name" . }}
+          image: "{{ .Values.deployment.imageRepo }}:{{ .Values.deployment.imageVersion }}"
+          imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.deployment.containerPort }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            failureThreshold: 1
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            failureThreshold: 1
+            periodSeconds: 15
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
       volumes:
-      - name: nginx-config
-        configMap:
-          name: frontend
+        - name: nginx-config
+          configMap:
+            name: {{ include "frontend.name" . }}
