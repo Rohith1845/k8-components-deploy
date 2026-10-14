@@ -3,4 +3,6 @@ configMap:
   USER_HOST: "user"
   AMQP_HOST: "rabbitmq"
   AMQP_USER: "roboshop"
+  
+secret:
   AMQP_PASS: "roboshop123"
