@@ -9,4 +9,4 @@ service:
   servicePort: 80
 
 tgb:
-  arn: "arn:aws:elasticloadbalancing:us-east-1:153402910823:targetgroup/roboshop-dev-frontend/4e1fbbff128c2ac5"   # set per env in values-dev.yaml / values-prod.yaml
+  arn: ""   # set per env in values-dev.yaml / values-prod.yaml
