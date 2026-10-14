@@ -1,5 +1,6 @@
 apiVersion: v2
-name: catalogue #chart name
-version: 1.0.0 # chart version
+name: catalogue            # chart name
 description: catalogue installation
-appVersion: v1 # this is application versions
+type: application
+version: 1.0.0             # chart version
+appVersion: "v1"           # application version
