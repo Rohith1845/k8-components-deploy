@@ -1,45 +1,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: catalogue
-  namespace: roboshop
-  labels: 
-    project: roboshop
-    component: catalogue
-    tier: backend 
+  name: {{ include "catalogue.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "catalogue.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.deployment.replicas }}
   selector:
     matchLabels:
-      project: roboshop
-      component: catalogue
-      tier: backend
+      {{- include "catalogue.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        project: roboshop
-        component: catalogue
-        tier: backend
+        {{- include "catalogue.labels" . | nindent 8 }}
+      annotations:
+        # roll pods automatically when ConfigMap values change
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
       containers:
-        - name: catalogue
-          image: "{{ .Values.deployment.imageRepo}}:{{ .Values.deployment.imageVersion}}"
-          imagePullPolicy: Always
+        - name: {{ include "catalogue.name" . }}
+          image: "{{ .Values.deployment.imageRepo }}:{{ .Values.deployment.imageVersion }}"
+          imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
           envFrom:
             - configMapRef:
-                name: catalogue
-          ports: 
-          - name: liveness-port
-            containerPort: 8080
+                name: {{ include "catalogue.name" . }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.deployment.containerPort }}
+              protocol: TCP
+          {{- with .Values.deployment.readinessProbe }}
           readinessProbe:
-            httpGet:
-              path: /health
-              port: liveness-port
-            failureThreshold: 1
-            periodSeconds: 15
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.deployment.livenessProbe }}
           livenessProbe:
-            httpGet:
-              path: /health
-              port: liveness-port
-            failureThreshold: 1
-            periodSeconds: 15
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
