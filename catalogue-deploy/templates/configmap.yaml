@@ -6,3 +6,16 @@ metadata:
 data: 
   MONGO: "true"
   MONGO_URL: "{{ .Values.configmap.mongoURL | quote }}"
+
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "catalogue.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "catalogue.labels" . | nindent 4 }}
+data:
+  {{- range $key, $value := .Values.configmap.data }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
